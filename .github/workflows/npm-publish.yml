@@ -4,23 +4,43 @@
 name: Node.js Package
 
 on:
-  push:
-    branches:
-      - master
+  pull_request:
+    types: [opened]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Set up
+        uses: actions/setup-node@v3
         with:
           node-version: 16
           java-version: 11
+      - name: Debug
+        run: |
+          echo "Base branch: ${{ github.base_ref }}"
+          echo "Head branch: ${{ github.head_ref }}"
+      
       - name: Download Scantist-Bom-Detect
         run: curl -s https://download.scantist.io/sca-bom-detect-v4.jar --output sca-bom-detect-v4.jar
+
+      - name: Checkout Base branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{github.base_ref }}
+      
+      - name: Scanning Base branch
+        env: # Setting the Token
+          SCANTISTTOKEN: ${{secrets.SCANTISTTOKEN}}
+          SCANTIST_IMPORT_URL : "https://api-v4staging.scantist.io/v2/scans/ci-scan/" # add this line if you are setting up on a dedicated scantist server
+        run: java -jar sca-bom-detect-v4.jar -project_name example-javascript-yarn
         
-      - name: Upload to Scantist 
+      - name: Checkout Head branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{github.head_ref }}
+      
+      - name: Scanning Head branch
         env: # Setting the Token
           SCANTISTTOKEN: ${{secrets.SCANTISTTOKEN}}
           SCANTIST_IMPORT_URL : "https://api-v4staging.scantist.io/v2/scans/ci-scan/" # add this line if you are setting up on a dedicated scantist server
