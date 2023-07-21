@@ -20,11 +20,19 @@ jobs:
         run: |
           echo "Base branch: ${{ github.base_ref }}"
           echo "Head branch: ${{ github.head_ref }}"
+          
+      - name: Scanning Head branch
+        env: # Setting the Token
+          SCANTISTTOKEN: ${{secrets.SCANTISTTOKEN}}
+          SCANTIST_IMPORT_URL : "https://api-v4staging.scantist.io/v2/scans/ci-scan/" # add this line if you are setting up on a dedicated scantist server
+        run: |
+          curl -s https://download.scantist.io/sca-bom-detect-v4.jar --output sca-bom-detect-v4.jar
+          java -jar sca-bom-detect-v4.jar -from Careem
 
       - name: Checkout Base branch
         uses: actions/checkout@v3
         with:
-          ref: ${{github.base_ref }}
+          ref: ${{ github.base_ref }}
       
       - name: Scanning Base branch
         env: # Setting the Token
@@ -32,17 +40,6 @@ jobs:
           SCANTIST_IMPORT_URL : "https://api-v4staging.scantist.io/v2/scans/ci-scan/" # add this line if you are setting up on a dedicated scantist server
         run: |
           curl -s https://download.scantist.io/sca-bom-detect-v4.jar --output sca-bom-detect-v4.jar
-          java -jar sca-bom-detect-v4.jar -project_name example-javascript-yarn
-        
-      - name: Checkout Head branch
-        uses: actions/checkout@v3
-        with:
-          ref: ${{github.head_ref }}
+          java -jar sca-bom-detect-v4.jar -from Careem -head_ref ${{ github.head_ref }} -base_ref ${{ github.base_ref }}
       
-      - name: Scanning Head branch
-        env: # Setting the Token
-          SCANTISTTOKEN: ${{secrets.SCANTISTTOKEN}}
-          SCANTIST_IMPORT_URL : "https://api-v4staging.scantist.io/v2/scans/ci-scan/" # add this line if you are setting up on a dedicated scantist server
-        run: |
-          curl -s https://download.scantist.io/sca-bom-detect-v4.jar --output sca-bom-detect-v4.jar
-          java -jar sca-bom-detect-v4.jar -project_name example-javascript-yarn
+      
