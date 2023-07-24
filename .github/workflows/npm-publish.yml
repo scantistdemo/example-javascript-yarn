@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-          java-version: 11
+          java-version: 17
       - name: Download Scantist-Bom-Detect
         run: curl -s https://download.scantist.io/sca-bom-detect-v4.jar --output sca-bom-detect-v4.jar
         
