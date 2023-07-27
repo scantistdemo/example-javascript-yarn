@@ -22,6 +22,11 @@ jobs:
           echo "Base branch: ${{ github.base_ref }}"
           echo "Head branch: ${{ github.head_ref }}"
           
+      - name: Checkout Head branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          
       - name: Scanning Head branch
         env: # Setting the Token
           SCANTISTTOKEN: ${{secrets.SCANTISTTOKEN}}
