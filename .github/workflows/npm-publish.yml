@@ -17,6 +17,12 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: 17
+          
+      - name: Set up node 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      
       - name: Debug
         run: |
           echo "Base branch: ${{ github.base_ref }}"
@@ -26,6 +32,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
+          
+      - name: Building Head branch
+        run: |
+          rm yarn.lock
+          npm install
           
       - name: Scanning Head branch
         env: # Setting the Token
@@ -40,6 +51,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.base_ref }}
+          
+      - name: Building Base branch
+        run: |
+          rm yarn.lock
+          npm install
       
       - name: Scanning Base branch
         env: # Setting the Token
