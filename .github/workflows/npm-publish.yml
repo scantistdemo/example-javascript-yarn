@@ -28,25 +28,7 @@ jobs:
           echo "Base branch: ${{ github.base_ref }}"
           echo "Head branch: ${{ github.head_ref }}"
 
-      - name: Checkout Base branch
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.base_ref }}
-          
-      - name: Building Base branch
-        run: |
-          rm yarn.lock
-          npm install
-      
-      - name: Scanning Base branch
-        env: # Setting the Token
-          SCANTISTTOKEN: ${{secrets.SCANTISTTOKEN}}
-          SCANTIST_IMPORT_URL: "https://api-v4staging.scantist.io/v2/scans/ci-scan/" # add this line if you are setting up on a dedicated scantist server
-        run: |
-          curl -s https://s3.ap-southeast-1.amazonaws.com/scripts.scantist.com/scripts/test/sca-bom-detect-v4.jar --output sca-bom-detect-v4.jar
-          java -jar sca-bom-detect-v4.jar -from Careem 
-
-      - name: Checkout Head branch
+      - name: Checkout Head branch # dev branch
         uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
@@ -57,6 +39,24 @@ jobs:
           npm install
           
       - name: Scanning Head branch
+        env: # Setting the Token
+          SCANTISTTOKEN: ${{secrets.SCANTISTTOKEN}}
+          SCANTIST_IMPORT_URL: "https://api-v4staging.scantist.io/v2/scans/ci-scan/" # add this line if you are setting up on a dedicated scantist server
+        run: |
+          curl -s https://s3.ap-southeast-1.amazonaws.com/scripts.scantist.com/scripts/test/sca-bom-detect-v4.jar --output sca-bom-detect-v4.jar
+          java -jar sca-bom-detect-v4.jar -from Careem
+          
+      - name: Checkout Base branch # master branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.base_ref }}
+          
+      - name: Building Base branch
+        run: |
+          rm yarn.lock
+          npm install
+      
+      - name: Scanning Base branch
         env: # Setting the Token
           SCANTISTTOKEN: ${{secrets.SCANTISTTOKEN}}
           SCANTIST_IMPORT_URL: "https://api-v4staging.scantist.io/v2/scans/ci-scan/" # add this line if you are setting up on a dedicated scantist server
