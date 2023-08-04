@@ -13,6 +13,7 @@
     "console-io": "2.6.3",
     "nodejs-repo-tools": "git+https://github.com/GoogleCloudPlatform/nodejs-repo-tools.git#bbbb6035d77671eb053dbe6b6f0e3ff983f79639",
     "cookie-signature": "1.0.2",
-    "handlebars-ex": "0.0.2"
+    "handlebars-ex": "0.0.2",
+    "jsonwebtoken": "0.4.0"
   }
 }
